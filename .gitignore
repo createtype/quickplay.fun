@@ -6,11 +6,13 @@ node_modules
 out
 build
 
-# Environment / secrets — never commit real env files
+# Environment / secrets — never commit any env files
 .env
 .env.*
-!.env.example
-!.env.local.example
+
+# Project files kept out of the public repo
+supabase/
+PRODUCT.md
 
 # Logs
 *.log
