@@ -125,13 +125,18 @@ export default function GameRounds({
   }, [phase, index, clipBlocked]);
 
   // Explicitly play each clip (the autoPlay attribute is unreliable on mobile).
-  // If play is rejected (iOS Low Power Mode blocks autoplay), flag it so we show
-  // a tap-to-reveal prompt instead of a broken-looking play button.
+  // Only treat a genuine autoplay-policy block (NotAllowedError, e.g. iOS Low
+  // Power Mode) as "blocked" — other rejections (AbortError from a load/play
+  // race) are transient and must NOT trigger the tap-to-reveal fallback.
   useEffect(() => {
     if (phase !== "clip") return;
     const p = clipRef.current?.play();
     if (p && typeof p.then === "function") {
-      p.catch(() => setClipBlocked(true));
+      p.catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === "NotAllowedError") {
+          setClipBlocked(true);
+        }
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, index]);

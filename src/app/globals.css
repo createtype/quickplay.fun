@@ -329,7 +329,7 @@ video.clip { object-fit: cover; background: #000; }
   gap: 10px;
   border: none;
   border-radius: var(--r-md);
-  background: oklch(0.18 0.03 285 / 0.82);
+  background: oklch(0.12 0.02 285 / 0.97);
   color: var(--text);
   font-family: var(--font-display);
   font-weight: 800;
