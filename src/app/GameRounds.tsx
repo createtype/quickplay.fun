@@ -30,6 +30,7 @@ export default function GameRounds({
   const [guess, setGuess] = useState("");
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
   const outcomes = useRef<Outcome[]>([]);
+  const clipRef = useRef<HTMLVideoElement>(null);
 
   const current = movies[index];
 
@@ -77,9 +78,13 @@ export default function GameRounds({
     const v = document.createElement("video");
     v.preload = "auto";
     v.muted = true;
+    v.playsInline = true;
     v.src = current.clip;
     v.addEventListener("canplaythrough", finish, { once: true });
     v.load();
+    // Register playback intent within the start-tap gesture window so later
+    // programmatic .play() on the clip is allowed even without a fresh tap.
+    v.play().then(() => v.pause()).catch(() => {});
     const timer = setTimeout(finish, LOAD_TIMEOUT_MS);
     return () => {
       done = true;
@@ -113,6 +118,15 @@ export default function GameRounds({
     if (phase !== "clip" || !current) return;
     const t = setTimeout(() => setPhase("answer"), CLIP_MS);
     return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, index]);
+
+  // Explicitly play each clip (don't rely on the autoPlay attribute, which
+  // mobile blocks when a clip is reached without a fresh tap — e.g. after the
+  // countdown or a timer timeout).
+  useEffect(() => {
+    if (phase !== "clip") return;
+    clipRef.current?.play().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, index]);
 
@@ -179,6 +193,7 @@ export default function GameRounds({
           </div>
         ) : (
           <video
+            ref={clipRef}
             key={current.id}
             className="clip"
             src={current.clip}
