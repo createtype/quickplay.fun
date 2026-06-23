@@ -29,6 +29,7 @@ export default function GameRounds({
   const [loaded, setLoaded] = useState(false);
   const [guess, setGuess] = useState("");
   const [timeLeft, setTimeLeft] = useState(ROUND_SECONDS);
+  const [clipBlocked, setClipBlocked] = useState(false); // autoplay denied (Low Power Mode)
   const outcomes = useRef<Outcome[]>([]);
   const clipRef = useRef<HTMLVideoElement>(null);
 
@@ -45,6 +46,7 @@ export default function GameRounds({
       setTimeLeft(ROUND_SECONDS);
       setCount(3);
       setLoaded(false);
+      setClipBlocked(false);
       setPhase("loading"); // each round: load → countdown → clip
     }
   }
@@ -113,22 +115,32 @@ export default function GameRounds({
   }, [phase, count]);
 
   // clip phase → answer phase after the clip plays. Keyed on index so each
-  // round gets exactly one fresh CLIP_MS timer.
+  // round gets one fresh CLIP_MS timer. Skipped while clipBlocked (autoplay
+  // denied) so the clip waits for the tap instead of auto-advancing unseen.
   useEffect(() => {
-    if (phase !== "clip" || !current) return;
+    if (phase !== "clip" || !current || clipBlocked) return;
     const t = setTimeout(() => setPhase("answer"), CLIP_MS);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, index]);
+  }, [phase, index, clipBlocked]);
 
-  // Explicitly play each clip (don't rely on the autoPlay attribute, which
-  // mobile blocks when a clip is reached without a fresh tap — e.g. after the
-  // countdown or a timer timeout).
+  // Explicitly play each clip (the autoPlay attribute is unreliable on mobile).
+  // If play is rejected (iOS Low Power Mode blocks autoplay), flag it so we show
+  // a tap-to-reveal prompt instead of a broken-looking play button.
   useEffect(() => {
     if (phase !== "clip") return;
-    clipRef.current?.play().catch(() => {});
+    const p = clipRef.current?.play();
+    if (p && typeof p.then === "function") {
+      p.catch(() => setClipBlocked(true));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, index]);
+
+  // playClip — used by the tap-to-reveal fallback
+  function playClip() {
+    setClipBlocked(false);
+    clipRef.current?.play().catch(() => {});
+  }
 
   // countdown — only runs in the answer phase
   useEffect(() => {
@@ -192,18 +204,26 @@ export default function GameRounds({
             1-sec clip
           </div>
         ) : (
-          <video
-            ref={clipRef}
-            key={current.id}
-            className="clip"
-            src={current.clip}
-            autoPlay
-            muted
-            playsInline
-            controlsList="nodownload noplaybackrate"
-            disablePictureInPicture
-            onContextMenu={(e) => e.preventDefault()}
-          />
+          <div className="clip-wrap">
+            <video
+              ref={clipRef}
+              key={current.id}
+              className="clip"
+              src={current.clip}
+              autoPlay
+              muted
+              playsInline
+              controlsList="nodownload noplaybackrate"
+              disablePictureInPicture
+              onContextMenu={(e) => e.preventDefault()}
+            />
+            {clipBlocked && (
+              <button className="clip-reveal" onClick={playClip}>
+                <span className="clip-reveal-emoji">👆</span>
+                Tap to reveal the clip
+              </button>
+            )}
+          </div>
         )}
       </div>
     );

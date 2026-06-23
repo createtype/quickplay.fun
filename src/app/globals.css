@@ -317,6 +317,34 @@ body {
 }
 video.clip { object-fit: cover; background: #000; }
 
+/* Tap-to-reveal fallback (only shows when autoplay is blocked, e.g. iOS Low Power Mode) */
+.clip-wrap { position: relative; }
+.clip-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  border-radius: var(--r-md);
+  background: oklch(0.18 0.03 285 / 0.82);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  cursor: pointer;
+}
+.clip-reveal-emoji {
+  font-size: 40px;
+  animation: tap-bounce 1s var(--ease-out) infinite;
+}
+@keyframes tap-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
 .watch-cue {
   text-align: center;
   font-family: var(--font-display);
