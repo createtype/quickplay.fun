@@ -85,7 +85,7 @@ body {
   background: var(--brand);
   box-shadow: 0 0 0 4px var(--brand-soft);
 }
-.brand span { color: var(--brand); }
+.brand .tld { color: var(--brand); }
 
 /* ---------- Type scale ---------- */
 .h1 {

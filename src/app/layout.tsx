@@ -25,7 +25,7 @@ export default function RootLayout({
         <div className="wrap">
           <a className="brand" href="/">
             <span className="dot" aria-hidden />
-            quickplay<span>.fun</span>
+            <span>quickplay<span className="tld">.fun</span></span>
           </a>
           {children}
         </div>
