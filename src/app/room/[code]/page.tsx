@@ -15,6 +15,7 @@ import { isExpired } from "@/lib/roomExpiry";
 import { rankTitle } from "@/lib/score";
 import { personalBlob, leaderboardBlob, shareOrDownload, isMobile } from "@/lib/shareCard";
 import { makeSlug } from "@/lib/shareSlug";
+import { unlockMediaPlayback } from "@/lib/mediaUnlock";
 import GameRounds, { type Outcome } from "@/app/GameRounds";
 
 type Phase = "loading" | "lobby" | "playing" | "done";
@@ -99,6 +100,7 @@ export default function RoomPage({
       return;
     }
     if (joining.current) return;
+    unlockMediaPlayback(); // inside the tap, so clips can autoplay on mobile
     joining.current = true;
     const player = await joinRoom(code, name.trim());
     joining.current = false;

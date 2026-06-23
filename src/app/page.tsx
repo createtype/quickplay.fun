@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Language } from "@/data/movies";
 import { createRoom, FRIENDS_COUNTS } from "@/lib/rooms";
+import { unlockMediaPlayback } from "@/lib/mediaUnlock";
 
 const LANGS: { id: Language; label: string }[] = [
   { id: "hindi", label: "Hindi" },
@@ -40,6 +41,7 @@ export default function Home() {
       setErr("Pick at least one language to play.");
       return;
     }
+    unlockMediaPlayback(); // inside the tap, so clips can autoplay on mobile
     router.push(`/play?langs=${selected.join(",")}`);
   }
 
