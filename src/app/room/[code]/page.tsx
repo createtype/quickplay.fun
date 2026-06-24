@@ -132,6 +132,25 @@ export default function RoomPage({
     }
   }
 
+  // shareBoard — leaderboard image; usable from lobby or done (derives its own data)
+  async function shareBoard() {
+    if (sharing) return;
+    setSharing(true);
+    const total = room?.round_count ?? 5;
+    const rows = [...players]
+      .sort((a, b) => b.score - a.score)
+      .map((p) => ({
+        name: p.name,
+        score: p.finished ? p.score : 0,
+        total,
+        you: !!(me && p.id === me.id),
+      }));
+    const url = `${window.location.origin}/room/${code}`;
+    const blob = await leaderboardBlob(rows);
+    await shareOrDownload(blob, "quickplay-leaderboard.png", "Our Guess the Movie scores! Join us →", url);
+    setSharing(false);
+  }
+
   if (phase === "loading") return <div className="card enter">Loading room…</div>;
 
   // LOBBY
@@ -181,6 +200,11 @@ export default function RoomPage({
                   </div>
                 ))}
               </div>
+              {players.some((p) => p.finished) && (
+                <button className="btn btn-cyan" onClick={shareBoard} disabled={sharing}>
+                  {sharing ? "Making card…" : mobile ? "Share leaderboard 🏆" : "Download leaderboard 🏆"}
+                </button>
+              )}
             </div>
           </>
         )}
@@ -209,21 +233,6 @@ export default function RoomPage({
     const caption = `I'm a ${rank.emoji} ${rank.title}! Nailed ${correct}/${total} clips on Guess the Movie. Beat me →`;
     const blob = await personalBlob({ emoji: rank.emoji, title: rank.title, correct, total, name: myName });
     await shareOrDownload(blob, "quickplay-score.png", caption, url);
-    setSharing(false);
-  }
-
-  async function shareBoard() {
-    if (sharing) return;
-    setSharing(true);
-    const url = `${window.location.origin}/room/${code}`;
-    const rows = sorted.map((p) => ({
-      name: p.name,
-      score: p.finished ? p.score : 0,
-      total,
-      you: !!(me && p.id === me.id),
-    }));
-    const blob = await leaderboardBlob(rows);
-    await shareOrDownload(blob, "quickplay-leaderboard.png", "Our Guess the Movie scores! Join us →", url);
     setSharing(false);
   }
 
