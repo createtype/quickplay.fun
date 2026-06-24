@@ -224,6 +224,10 @@ export default function RoomPage({
   const total = room?.round_count ?? 5;
   const rank = rankTitle(correct, total);
   const sorted = [...players].sort((a, b) => b.score - a.score);
+  // tie-aware rank: same score = same place (1,2,2,4…)
+  const placeOf = (p: Player) => 1 + sorted.filter((o) => o.score > p.score).length;
+  const medalFor = (place: number) =>
+    place === 1 ? "🥇 " : place === 2 ? "🥈 " : place === 3 ? "🥉 " : "";
 
   async function shareCard() {
     if (sharing) return;
@@ -249,10 +253,10 @@ export default function RoomPage({
       <div className="card">
         <span className="label">Leaderboard</span>
         <div style={{ marginTop: 10 }}>
-          {sorted.map((p, i) => (
+          {sorted.map((p) => (
             <div className="review-row" key={p.id}>
               <span>
-                {i === 0 ? "🥇 " : i === 1 ? "🥈 " : i === 2 ? "🥉 " : ""}
+                {p.finished ? medalFor(placeOf(p)) : ""}
                 {p.name}
                 {me && p.id === me.id ? " (you)" : ""}
               </span>
