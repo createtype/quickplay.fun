@@ -75,9 +75,11 @@ function drawPersonalCard(
   footer(ctx, H);
 }
 
-// competitionRank — tie-aware rank per row (1,2,2,4…). Assumes rows sorted desc by score.
-function competitionRank(rows: RankRow[]): number[] {
-  return rows.map((r) => 1 + rows.filter((o) => o.score > r.score).length);
+// denseRank — tie-aware rank with no gaps (1,2,2,3…): rank = 1 + distinct higher scores.
+function denseRank(rows: RankRow[]): number[] {
+  return rows.map(
+    (r) => 1 + new Set(rows.filter((o) => o.score > r.score).map((o) => o.score)).size
+  );
 }
 
 // Leaderboard layout (shared by sizer + drawer)
@@ -94,7 +96,7 @@ function leaderboardHeight(count: number): number {
 // drawLeaderboardCard
 function drawLeaderboardCard(ctx: CanvasRenderingContext2D, rows: RankRow[]) {
   const top = rows.slice(0, LB_MAX);
-  const ranks = competitionRank(top);
+  const ranks = denseRank(top);
   const h = leaderboardHeight(rows.length);
   const medals: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
 

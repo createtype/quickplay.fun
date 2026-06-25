@@ -224,8 +224,9 @@ export default function RoomPage({
   const total = room?.round_count ?? 5;
   const rank = rankTitle(correct, total);
   const sorted = [...players].sort((a, b) => b.score - a.score);
-  // tie-aware rank: same score = same place (1,2,2,4…)
-  const placeOf = (p: Player) => 1 + sorted.filter((o) => o.score > p.score).length;
+  // tie-aware dense rank: same score = same place, no gaps (1,2,2,3…)
+  const placeOf = (p: Player) =>
+    1 + new Set(sorted.filter((o) => o.score > p.score).map((o) => o.score)).size;
   const medalFor = (place: number) =>
     place === 1 ? "🥇 " : place === 2 ? "🥈 " : place === 3 ? "🥉 " : "";
 
