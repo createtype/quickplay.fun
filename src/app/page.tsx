@@ -175,6 +175,11 @@ export default function Home() {
           <a className="suggest-link" href="/idea">💡 Got an idea?</a>
         </div>
         <p style={{ margin: "14px 0 0" }}>Built for movie nerds. No signup, just play.</p>
+        <div className="foot-langs">
+          <a href="/guess-the-malayalam-movie">Guess the Malayalam Movie</a>
+          <a href="/guess-the-hindi-movie">Guess the Hindi Movie</a>
+          <a href="/guess-the-tamil-movie">Guess the Tamil Movie</a>
+        </div>
       </div>
     </>
   );
