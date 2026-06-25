@@ -1,0 +1,24 @@
+# quickplay.fun
+
+> A free browser game: watch a one-second clip from a movie and guess the film before a
+> 20-second timer runs out. Focused on Indian cinema — Hindi, Tamil and Malayalam. No signup.
+> Play solo or create a shareable room to play with friends on a live leaderboard.
+
+## How it works
+- Watch a 1-second movie clip.
+- Type the movie's name before the timer ends (misspellings within ~62% still count).
+- Solo games are 4 clips; friends games are 4, 6 or 8.
+- At the end you get a shareable score card with a stylish rank.
+
+## Pages
+- [Home / Play](https://quickplay.fun): start a solo or friends game.
+- [Guess the Malayalam Movie](https://quickplay.fun/guess-the-malayalam-movie)
+- [Guess the Hindi Movie](https://quickplay.fun/guess-the-hindi-movie)
+- [Guess the Tamil Movie](https://quickplay.fun/guess-the-tamil-movie)
+- [Suggest a movie](https://quickplay.fun/submit): add a missing film for review.
+
+## Facts
+- Price: Free, no signup, no account required.
+- Platform: Web browser (mobile and desktop).
+- Languages: Hindi (Bollywood), Tamil (Kollywood), Malayalam.
+- Modes: Solo, or multiplayer rooms with a shareable link and live leaderboard.

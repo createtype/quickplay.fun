@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Language } from "@/data/movies";
 import { createRoom, FRIENDS_COUNTS } from "@/lib/rooms";
 import { unlockMediaPlayback } from "@/lib/mediaUnlock";
+import HomeSchema from "@/app/HomeSchema";
 
 const LANGS: { id: Language; label: string }[] = [
   { id: "hindi", label: "Hindi" },
@@ -72,6 +73,7 @@ export default function Home() {
 
   return (
     <>
+      <HomeSchema />
       <h1 className="h1">
         Guess the <em>Movie</em> 🎬
       </h1>
