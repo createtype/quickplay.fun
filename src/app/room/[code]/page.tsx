@@ -163,6 +163,19 @@ export default function RoomPage({
         {room && <p className="sub">Room code <em>{code}</em></p>}
         {err && <div className="notice notice-bad">{err}</div>}
 
+        {/* room gone (expired/not found): keep late players — offer a fresh game */}
+        {!room && err && (
+          <div className="card">
+            <span className="label">Don&apos;t lose the fun — start a new game</span>
+            <a className="btn btn-cyan" href="/">
+              Create a new room 👯
+            </a>
+            <a className="btn btn-primary" href="/play">
+              Play solo ▶️
+            </a>
+          </div>
+        )}
+
         {room && (
           <>
             <div className="card">
